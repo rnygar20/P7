@@ -1,11 +1,20 @@
-from gnn import GNN
+#from gnn import GNN
 import torch
+from download_dataset import get_dataset
 
 def main():
-    GNN1 = GNN(16, 1)
-    print(GNN1(torch.randn(1,1,16)))
-    print(torch.randn(1,1,16).shape)
-    print(torch.randn(1,1,16))
+    data = get_dataset('Cora')
+    print(data.num_node_features)
+    print(data.num_classes)
+    print(data.num_edge_features)
+    print(data[0].num_nodes)
+    print(type(data[0]))
+    print(data[0].edge_index)
+
+    node_features = data.x
+
+    print("Node features shape:", node_features.shape)
+    print("Node features for the first node:", node_features[0])
 
 
 
