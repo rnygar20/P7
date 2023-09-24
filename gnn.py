@@ -1,7 +1,7 @@
 import torch
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 
 # Load the Cora dataset
 dataset = Planetoid(root='data/Cora', name='Cora', transform=T.NormalizeFeatures())
@@ -10,11 +10,7 @@ data = dataset[0]
 # Create a DataLoader
 loader = DataLoader(data, batch_size=1, shuffle=True)
 
-for batch in loader:
-    print(batch)
-    break
-#print(loader.dataset.x[0].size())
-""" import torch.nn as nn
+import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
 
@@ -65,23 +61,5 @@ def test():
     acc = correct / data.test_mask.sum().item()
     print(f'Test Accuracy: {acc * 100:.2f}%')
 
-test() """
-
-'''
-import torch
-
-class NN(torch.nn.Module):
-    def __init__(self, num_features, num_classes):
-        super(NN, self).__init__()
-
-        self.layers = torch.nn.Sequential(
-            torch.nn.Linear(num_features, 32),
-            torch.nn.ReLU(),
-            torch.nn.Linear(32, 16),
-            torch.nn.ReLU(),
-            torch.nn.Linear(16, num_classes)
-        )
-
-    def forward(self, x):
-        return  self.layers(x).squeeze(2)
-'''
+test()
+   
