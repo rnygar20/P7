@@ -30,8 +30,8 @@ class GCN(nn.Module):
 
         # Apply second GCN layer
         x = self.conv2(x, edge_index)
-
-        return F.log_softmax(x, dim=1)
+        print(F.softmax(x, dim=1)[0]) '''summer op til 1'''
+        return F.softmax(x, dim=1)
 
 import torch.optim as optim
 
@@ -49,7 +49,7 @@ def train(epoch):
     print(f'Epoch: {epoch}, Loss: {loss.item()}')
 
 # Training loop
-for epoch in range(1, 201):
+for epoch in range(1, 1):
     train(epoch)
 
 
