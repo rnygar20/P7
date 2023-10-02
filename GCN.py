@@ -1,18 +1,8 @@
-import torch
-from torch_geometric.datasets import Planetoid
-import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
-
-# Load the Cora dataset
-dataset = Planetoid(root='data/Cora', name='Cora', transform=T.NormalizeFeatures())
-data = dataset[0]
-
-# Create a DataLoader
-loader = DataLoader(data, batch_size=1, shuffle=True)
-
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
+import torch.optim as optim
 
 class GCN(nn.Module):
     def __init__(self, num_features, num_classes):
@@ -30,16 +20,11 @@ class GCN(nn.Module):
 
         # Apply second GCN layer
         x = self.conv2(x, edge_index)
-        print(F.softmax(x, dim=1)[0]) '''summer op til 1'''
+
         return F.softmax(x, dim=1)
 
-import torch.optim as optim
 
-# Initialize the model and optimizer
-model = GCN(num_features=data.num_features, num_classes=dataset.num_classes)
-optimizer = optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
-
-def train(epoch):
+def train(model,optimizer,data,epoch):
     model.train()
     optimizer.zero_grad()
     out = model(data)
@@ -48,12 +33,8 @@ def train(epoch):
     optimizer.step()
     print(f'Epoch: {epoch}, Loss: {loss.item()}')
 
-# Training loop
-for epoch in range(1, 1):
-    train(epoch)
 
-
-def test():
+def test(model,data):
     model.eval()
     out = model(data)
     pred = out.argmax(dim=1)
@@ -61,5 +42,15 @@ def test():
     acc = correct / data.test_mask.sum().item()
     print(f'Test Accuracy: {acc * 100:.2f}%')
 
-test()
-   
+# GCN
+def run_GCN(dataset, batch_size=1):
+    data = dataset[0]
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    # Initialize the model and optimizer
+    model = GCN(num_features=data.num_features, num_classes=dataset.num_classes)
+    optimizer = optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+    # Training loop
+    for epoch in range(1, 100):
+        train(model,optimizer,data,epoch)
+    
+    test(model,data)

@@ -1,21 +1,24 @@
-#from gnn import GNN
 import torch
-from download_dataset import get_dataset
+from download_dataset import download_datasets, get_dataset
+from GCN import run_GCN
+from GraphSAGE import run_GraphSAGE
+from GAT import run_GAT
 
 def main():
-    data = get_dataset('Cora')
-    print(data.num_node_features)
-    print(data.num_classes)
-    print(data.num_edge_features)
-    print(data[0].num_nodes)
-    print(type(data[0]))
-    print(data[0].edge_index)
-
-    node_features = data.x
-
-    print("Node features shape:", node_features.shape)
-    print("Node features for the first node:", node_features[0])
-
+    download_datasets()
+    cora_dataset = get_dataset('Cora')
+    CiteSeer_dataset = get_dataset('CiteSeer')
+    PubMed_dataset = get_dataset('PubMed')
+    #run_GCN(cora_dataset)
+    #run_GCN(CiteSeer_dataset)
+    #run_GCN(PubMed_dataset)
+    #run_GraphSAGE(cora_dataset)
+    #run_GraphSAGE(CiteSeer_dataset)
+    #run_GraphSAGE(PubMed_dataset)
+    #run_GAT(cora_dataset)
+    #run_GAT(CiteSeer_dataset)
+    #run_GAT(PubMed_dataset)
+    
 
 
 

@@ -1,25 +1,38 @@
+from torch_geometric.datasets import Planetoid
+import os
+import torch_geometric.transforms as T
 
-import torch_geometric
-from torch_geometric.datasets import CitationFull
-datasets = ['Cora', 'CiteSeer', 'PubMed']
 
 def download_datasets():
-    for dataset in datasets:
-        data = CitationFull(root='./dataset', name=dataset, )
+    dataset_names = ['Cora', 'CiteSeer', 'PubMed']
+    data_dir = './dataset/'
 
-        # print information about the dataset
-        print("Name of the dataset: {}".format(dataset))
-        print('====================')
-        print('Dataset: {}'.format(data))
-        print('====================')
-        print('Number of graphs: {}'.format(len(data)))
-        print('Number of features: {}'.format(data.num_features))
-        print('Number of classes: {}'.format(data.num_classes))
-        print('Number of edge features: {}'.format(data.num_edge_features))
-        print("Number of nodes: {}".format(data[0].num_nodes))
-        print("Number of edges: {}".format(data[0].num_edges))
+    for name in dataset_names:
+        dataset_path = os.path.join(data_dir, name)
+    
+        # Check if the dataset directory already exists
+        if os.path.exists(dataset_path):
+            print(f"Dataset {name} already exists in {data_dir}.")  
+        else:
+            dataset = Planetoid(root=data_dir, name=name, transform=T.NormalizeFeatures())
+            print(f"Dataset: {name}")
+            print(f"Number of nodes: {dataset[0].num_nodes}")
+            print(f"Number of edges: {dataset[0].num_edges}")
+            print(f"Number of classes: {dataset.num_classes}")
+            print(f"Number of features: {dataset.num_features}")
+            print(f"Number of graphs: {len(dataset)}")
+    
 
-def get_dataset(dataset):
-    data = CitationFull(root='./dataset', name=dataset, )
-    return data
+def get_dataset(name):
+    """
+    Load a dataset from Planetoid and return it.
 
+    Args:
+        name (str): Name of the dataset ('Cora', 'CiteSeer', or 'PubMed').
+
+    Returns:
+        torch_geometric.data.Dataset: The loaded dataset.
+    """
+    data_dir = './dataset/'
+    dataset = Planetoid(root=data_dir, name=name)
+    return dataset
