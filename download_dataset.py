@@ -12,7 +12,7 @@ def download_datasets():
     
         # Check if the dataset directory already exists
         if os.path.exists(dataset_path):
-            print(f"Dataset {name} already exists in {data_dir}.")  
+            print(f"Dataset {name} already exists in {data_dir}.") 
         else:
             dataset = Planetoid(root=data_dir, name=name, transform=T.NormalizeFeatures())
             print(f"Dataset: {name}")
