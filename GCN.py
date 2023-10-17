@@ -6,9 +6,10 @@ import torch.optim as optim
 import torch
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
 
 class GCN(nn.Module):
-    def __init__(self, num_features, num_classes, hidden_channels=16, size_gnn=2):
+    def __init__(self, num_features, num_classes, hidden_channels=16, size_gnn=2, dropout=0.5):
         super(GCN, self).__init__()
         self.convs = torch.nn.ModuleList()
 
@@ -18,7 +19,7 @@ class GCN(nn.Module):
             self.convs.append(GCNConv(hidden_channels, hidden_channels))
         
         # add dropout layer
-        self.dropout = nn.Dropout(p=0.5)
+        self.dropout = nn.Dropout(p=dropout)
 
         self.convs.append(GCNConv(hidden_channels, num_classes))
 
@@ -71,16 +72,57 @@ def test(model, data):
     acc = correct / data.test_mask.sum().item()
     print(f'Test Accuracy: {acc * 100:.2f}%')
 
+    # F1 score
+    f1 = f1_score(true_labels, predicted_labels, average='macro')
+    print(f'Test F1 score: {f1:.4f}')
+
+
+    #append the metrics to a csv file, and include the columns: avg_auc, recall, acc, f1
+    with open('results_GCN.csv', 'a') as f:
+        f.write(f'{avg_auc},{recall},{acc},{f1}\n')
+
 
 # GCN
-def run_GCN(dataset, batch_size=1):
+def run_GCN(dataset):
+    batch_size = 256
+    hidden_channels = 100
+    size_gcn = 1
+    lr = 0.01
+    weight_decay = 5e-4
+    epochs = 100
+    dropout = 0.5
+
     data = dataset[0]
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
     # Initialize the model and optimizer
-    model = GCN(num_features=data.num_features, num_classes=dataset.num_classes, hidden_channels=100,size_gnn=1)
-    optimizer = optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+    model = GCN(num_features=data.num_features, num_classes=dataset.num_classes, hidden_channels=hidden_channels,
+                size_gnn=size_gcn, dropout=dropout)
+    optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     # Training loop
-    for epoch in range(1, 100):
-        train(model,optimizer,data,epoch)
+    for epoch in range(1, epochs+1):
+        for data in loader:
+            train(model,optimizer,data,epoch)
     
     test(model,data)
+
+
+def run_GCN_hyp(dataset,lr,hidden_channels,size_gcn,weight_decay,epochs,dropout,batch_size):
+    data = dataset[0]
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    # Initialize the model and optimizer
+    model = GCN(num_features=data.num_features, num_classes=dataset.num_classes, hidden_channels=hidden_channels,
+                size_gnn=size_gcn, dropout=dropout)
+    optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    # Training loop
+    for epoch in range(1, epochs+1):
+        for data in loader:
+            train(model,optimizer,data,epoch)
+    
+    #test(model,data)
+
+    #get validation loss
+    model.eval()
+    out = model(data.x, data.edge_index)
+    val_loss = F.nll_loss(out[data.val_mask], data.y[data.val_mask])
+    return val_loss
+
