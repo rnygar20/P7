@@ -34,5 +34,5 @@ def get_dataset(name):
         torch_geometric.data.Dataset: The loaded dataset.
     """
     data_dir = './dataset/'
-    dataset = Planetoid(root=data_dir, name=name)
+    dataset = Planetoid(root=data_dir, name=name, split='full')
     return dataset
