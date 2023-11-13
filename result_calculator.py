@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Import results_GAT.csv and calculate the average of each column for each dataset and loss function and save the results to a new file
-df = pd.read_csv('results_GAT.csv', header=0)
+df = pd.read_csv('results_GraphSAGE.csv', header=0)
 df = df.groupby(['dataset','lossfunction']).mean()
 df = df.iloc[:, :6]
 df = df.round(3)

@@ -63,30 +63,30 @@ def test(model, data, training_time_list, dataset_name, lossfunction_name):
 
     # Recall
     recall = recall_score(true_labels, predicted_labels, average='macro')  # Using macro average
-    print(f'Test Recall: {recall:.4f}')
+    #print(f'Test Recall: {recall:.4f}')
 
     # Acuuracy
     correct = pred[data.test_mask].eq(data.y[data.test_mask]).sum().item()
     acc = correct / data.test_mask.sum().item()
-    print(f'Test Accuracy: {acc * 100:.2f}%')
+    #print(f'Test Accuracy: {acc * 100:.2f}%')
 
     # F1 score macro
     f1_macro = f1_score(true_labels, predicted_labels, average='macro')
-    print(f'Test F1-macro score: {f1_macro:.4f}')
+    #print(f'Test F1-macro score: {f1_macro:.4f}')
 
     # F1 score micro
     f1_micro = f1_score(true_labels, predicted_labels, average='micro')
-    print(f'Test F1-micro score: {f1_micro:.4f}')
+    #print(f'Test F1-micro score: {f1_micro:.4f}')
 
     # AUC-ROC from torcheval
     metric = MulticlassAUROC(num_classes=probas_test_set.size(1), average="macro")
     metric.update(probas_test_set, true_labels)
     auroc = metric.compute()
-    print(f'Test AUROC: {auroc:.4f}')
+    #print(f'Test AUROC: {auroc:.4f}')
 
     # Calculate average training time
     avg_training_time = sum(training_time_list) / len(training_time_list)
-    print(f'Average training time: {avg_training_time:.4f}')
+    #print(f'Average training time: {avg_training_time:.4f}')
 
     # Calculate accuracy for each class
     class_correct = list(0. for i in range(probas_test_set.size(1)))
@@ -98,8 +98,8 @@ def test(model, data, training_time_list, dataset_name, lossfunction_name):
             class_total[label] += 1
     
     # Print accuracy for each class
-    for i in range(probas_test_set.size(1)):
-        print(f'Accuracy of {i}: {100 * class_correct[i] / class_total[i]}%')
+    #for i in range(probas_test_set.size(1)):
+    #    print(f'Accuracy of {i}: {100 * class_correct[i] / class_total[i]}%')
 
     # Calculate F1 score for each class
     f1_list = []
@@ -107,8 +107,8 @@ def test(model, data, training_time_list, dataset_name, lossfunction_name):
         f1_list.append(f1_score(true_labels == i, predicted_labels == i))
     
     # Print F1 score for each class
-    for i in range(probas_test_set.size(1)):
-        print(f'F1 score of {i}: {f1_list[i]:.4f}')
+    #for i in range(probas_test_set.size(1)):
+    #    print(f'F1 score of {i}: {f1_list[i]:.4f}')
 
 
     # AUC for each class
@@ -117,8 +117,8 @@ def test(model, data, training_time_list, dataset_name, lossfunction_name):
         auc_list.append(roc_auc_score((true_labels == i).type(torch.int), probas[data.test_mask, i].cpu().detach().numpy()))
     
     # Print AUC for each class
-    for i in range(probas.size(1)):
-        print(f'AUC of {i}: {auc_list[i]:.4f}')
+    #for i in range(probas.size(1)):
+    #    print(f'AUC of {i}: {auc_list[i]:.4f}')
 
     # Create dataframe and include the columns: recall, acc, f1_macro, f1_micro, auroc, avg_training_time and the accuracy for each class and the AUC for each class
 
@@ -133,10 +133,10 @@ def test(model, data, training_time_list, dataset_name, lossfunction_name):
     df = pd.DataFrame(df_dict)
 
     # Write df to csv file
-    if os.path.exists('results_GraphSAGE.csv'):
-        df.to_csv('results_GraphSAGE.csv', mode='a', header=False, index=False)
+    if os.path.exists('results_GraphSAGE_cs50.csv'):
+        df.to_csv('results_GraphSAGE_cs50.csv', mode='a', header=False, index=False)
     else:
-        df.to_csv('results_GraphSAGE.csv', mode='a', header=True, index=False)
+        df.to_csv('results_GraphSAGE_cs50.csv', mode='a', header=True, index=False)
         
 
 # GraphSAGE
